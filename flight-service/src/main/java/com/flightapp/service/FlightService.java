@@ -11,10 +11,6 @@ public interface FlightService {
 
 	Mono<Flight> addFlight(Flight flight);
 
-//    Mono<Void> deleteFlight(String flightId);
-
-//    Mono<Flight> updateFlight(String id, Map<String, Object> updates);
-
 	Flux<Flight> getAllFlights();
 
 	Mono<Flight> searchFlightById(String flightId);

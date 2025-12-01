@@ -16,87 +16,63 @@ import reactor.core.publisher.Mono;
 @Service
 public class FlightServiceImpl implements FlightService {
 
-	private final FlightRepository flightRepository;
+    private static final String FLIGHT_NOT_FOUND = "Flight not found";
+    private static final String FLIGHT_ALREADY_EXISTS = "Flight already exists";
+    private static final String NOT_ENOUGH_SEATS = "Not enough seats";
 
-	public FlightServiceImpl(FlightRepository flightRepository) {
-		this.flightRepository = flightRepository;
-	}
+    private final FlightRepository flightRepository;
 
-	@Override
-	public Mono<Flight> addFlight(Flight flight) {
-	    return flightRepository
-	            .findByAirlineAndFromPlaceAndToPlaceAndDepartureTime(
-	                    flight.getAirline(),
-	                    flight.getFromPlace(),
-	                    flight.getToPlace(),
-	                    flight.getDepartureTime()
-	            )
-	            .flatMap(existing -> 
-	                    Mono.<Flight>error(new ResponseStatusException(HttpStatus.CONFLICT, "Flight already exists"))
-	            )
-	            .switchIfEmpty(flightRepository.save(flight));
-	}
+    public FlightServiceImpl(FlightRepository flightRepository) {
+        this.flightRepository = flightRepository;
+    }
 
+    @Override
+    public Mono<Flight> addFlight(Flight flight) {
+        return flightRepository
+                .findByAirlineAndFromPlaceAndToPlaceAndDepartureTime(
+                        flight.getAirline(),
+                        flight.getFromPlace(),
+                        flight.getToPlace(),
+                        flight.getDepartureTime())
+                .hasElement()
+                .flatMap(exists -> {
+                    if (exists) {
+                        return Mono.error(
+                                new ResponseStatusException(HttpStatus.CONFLICT, FLIGHT_ALREADY_EXISTS)
+                        );
+                    }
+                    return flightRepository.save(flight);
+                });
+    }
 
-//    @Override
-//    public Mono<Void> deleteFlight(String flightId) {
-//        return flightRepository.deleteById(flightId);
-//    }
+    @Override
+    public Flux<Flight> getAllFlights() {
+        return flightRepository.findAll();
+    }
 
-//    @Override
-//    public Mono<Flight> updateFlight(String id, Map<String, Object> updates) {
-//        return flightRepository.findById(id)
-//                .switchIfEmpty(Mono.error(new RuntimeException("Flight not found")))
-//                .flatMap(flight -> {
-//                    updates.forEach((key, value) -> {
-//                        switch (key) {
-//                            case "airline" -> flight.setAirline((String) value);
-//                            case "fromPlace" -> flight.setFromPlace((String) value);
-//                            case "toPlace" -> flight.setToPlace((String) value);
-//                            case "departureTime" ->
-//                                    flight.setDepartureTime(LocalDateTime.parse((String) value));
-//                            case "arrivalTime" ->
-//                                    flight.setArrivalTime(LocalDateTime.parse((String) value));
-//                            case "price" ->
-//                                    flight.setPrice(((Number) value).intValue());
-//                            case "totalSeats" ->
-//                                    flight.setTotalSeats(((Number) value).intValue());
-//                            case "availableSeats" ->
-//                                    flight.setAvailableSeats(((Number) value).intValue());
-//                        }
-//                    });
-//                    return flightRepository.save(flight);
-//                });
-//    }
+    @Override
+    public Mono<Flight> searchFlightById(String flightId) {
+        return flightRepository.findById(flightId)
+                .switchIfEmpty(Mono.error(new RuntimeException(FLIGHT_NOT_FOUND)));
+    }
 
-	@Override
-	public Flux<Flight> getAllFlights() {
-		return flightRepository.findAll();
-	}
+    @Override
+    public Flux<Flight> searchFlights(String from, String to, LocalDateTime start, LocalDateTime end) {
+        return flightRepository.findByFromPlaceAndToPlaceAndDepartureTimeBetween(from, to, start, end);
+    }
 
-	@Override
-	public Mono<Flight> searchFlightById(String flightId) {
-		return flightRepository.findById(flightId).switchIfEmpty(Mono.error(new RuntimeException("Flight not found")));
-	}
+    @Override
+    public Flux<Flight> searchFlightsByAirline(String fromPlace, String toPlace, String airline) {
+        return flightRepository.findByFromPlaceAndToPlaceAndAirline(fromPlace, toPlace, airline);
+    }
 
-	@Override
-	public Flux<Flight> searchFlights(String from, String to, LocalDateTime start, LocalDateTime end) {
-	    return flightRepository.findByFromPlaceAndToPlaceAndDepartureTimeBetween(from, to, start, end);
-	}
-
-	@Override
-	public Flux<Flight> searchFlightsByAirline(String fromPlace, String toPlace, String airline) {
-
-		return flightRepository.findByFromPlaceAndToPlaceAndAirline(fromPlace, toPlace, airline);
-	}
-	
-	@Override
+    @Override
     public Mono<Flight> reserveSeats(String flightId, int seatCount) {
         return flightRepository.findById(flightId)
-                .switchIfEmpty(Mono.error(new RuntimeException("Flight not found")))
+                .switchIfEmpty(Mono.error(new RuntimeException(FLIGHT_NOT_FOUND)))
                 .flatMap(flight -> {
                     if (flight.getAvailableSeats() < seatCount) {
-                        return Mono.error(new RuntimeException("Not enough seats"));
+                        return Mono.error(new RuntimeException(NOT_ENOUGH_SEATS));
                     }
                     flight.setAvailableSeats(flight.getAvailableSeats() - seatCount);
                     return flightRepository.save(flight);
@@ -106,7 +82,7 @@ public class FlightServiceImpl implements FlightService {
     @Override
     public Mono<Flight> releaseSeats(String flightId, int seatCount) {
         return flightRepository.findById(flightId)
-                .switchIfEmpty(Mono.error(new RuntimeException("Flight not found")))
+                .switchIfEmpty(Mono.error(new RuntimeException(FLIGHT_NOT_FOUND)))
                 .flatMap(flight -> {
                     flight.setAvailableSeats(flight.getAvailableSeats() + seatCount);
                     return flightRepository.save(flight);
