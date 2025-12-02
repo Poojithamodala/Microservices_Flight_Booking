@@ -26,7 +26,6 @@ class KafkaConsumerConfigTest {
 		assertNotNull(factory, "ConsumerFactory should not be null");
 		assertTrue(factory instanceof DefaultKafkaConsumerFactory, "Factory should be a DefaultKafkaConsumerFactory");
 
-		// Inspect configuration
 		@SuppressWarnings("unchecked")
 		DefaultKafkaConsumerFactory<String, BookingEvent> defaultFactory = (DefaultKafkaConsumerFactory<String, BookingEvent>) factory;
 
