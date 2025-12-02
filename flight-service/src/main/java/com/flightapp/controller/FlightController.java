@@ -26,48 +26,38 @@ import reactor.core.publisher.Mono;
 @RequestMapping("/api/flight")
 public class FlightController {
 
-    private final FlightService flightService;
+	private final FlightService flightService;
 
-    @PostMapping("/airline/inventory/add")
-    @ResponseStatus(HttpStatus.CREATED)
-    public Mono<Map<String, String>> addInventory(@Valid @RequestBody Flight flight) {
-        return flightService.addFlight(flight)
-                .map(savedFlight -> Map.of(
-                        "message", "Flight added successfully",
-                        "flightId", savedFlight.getId()
-                ));
-    }
+	@PostMapping("/airline/inventory/add")
+	@ResponseStatus(HttpStatus.CREATED)
+	public Mono<Map<String, String>> addInventory(@Valid @RequestBody Flight flight) {
+		return flightService.addFlight(flight)
+				.map(savedFlight -> Map.of("message", "Flight added successfully", "flightId", savedFlight.getId()));
+	}
 
-    @PostMapping("/search")
-    public Flux<Flight> searchFlights(@RequestBody FlightSearchRequest request) {
-        return flightService.searchFlights(
-                request.getFromPlace(),
-                request.getToPlace(),
-                request.getStartTime(),
-                request.getEndTime());
-    }
-    
-    @PostMapping("/search/airline")
-    public Flux<Flight> searchByAirline(@RequestBody Map<String, String> body) {
-        return flightService.searchFlightsByAirline(
-                body.get("fromPlace"),
-                body.get("toPlace"),
-                body.get("airline")
-        );
-    }
+	@PostMapping("/search")
+	public Flux<Flight> searchFlights(@RequestBody FlightSearchRequest request) {
+		return flightService.searchFlights(request.getFromPlace(), request.getToPlace(), request.getStartTime(),
+				request.getEndTime());
+	}
 
-    @GetMapping("/{id}")
-    public Mono<Flight> getFlightById(@PathVariable String id) {
-        return flightService.searchFlightById(id);
-    }
+	@PostMapping("/search/airline")
+	public Flux<Flight> searchByAirline(@RequestBody Map<String, String> body) {
+		return flightService.searchFlightsByAirline(body.get("fromPlace"), body.get("toPlace"), body.get("airline"));
+	}
 
-    @PutMapping("/internal/{id}/reserve/{seatCount}")
-    public Mono<Flight> reserveSeats(@PathVariable String id, @PathVariable int seatCount) {
-        return flightService.reserveSeats(id, seatCount);
-    }
+	@GetMapping("/{id}")
+	public Mono<Flight> getFlightById(@PathVariable String id) {
+		return flightService.searchFlightById(id);
+	}
 
-    @PutMapping("/internal/{id}/release/{seatCount}")
-    public Mono<Flight> releaseSeats(@PathVariable String id, @PathVariable int seatCount) {
-        return flightService.releaseSeats(id, seatCount);
-    }
+	@PutMapping("/internal/{id}/reserve/{seatCount}")
+	public Mono<Flight> reserveSeats(@PathVariable String id, @PathVariable int seatCount) {
+		return flightService.reserveSeats(id, seatCount);
+	}
+
+	@PutMapping("/internal/{id}/release/{seatCount}")
+	public Mono<Flight> releaseSeats(@PathVariable String id, @PathVariable int seatCount) {
+		return flightService.releaseSeats(id, seatCount);
+	}
 }
