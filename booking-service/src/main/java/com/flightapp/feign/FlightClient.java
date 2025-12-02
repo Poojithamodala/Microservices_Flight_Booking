@@ -11,11 +11,11 @@ import com.flightapp.dto.FlightDto;
 public interface FlightClient {
 
 	@GetMapping("/api/flight/{id}")
-	FlightDto getFlight(@PathVariable("id") String id);
+	FlightDto getFlight(@PathVariable String id);
 
 	@PutMapping("/api/flight/internal/{id}/reserve/{seatCount}")
-	Object reserveSeats(@PathVariable("id") String id, @PathVariable("seatCount") int seatCount);
+	Object reserveSeats(@PathVariable String id, @PathVariable int seatCount);
 
 	@PutMapping("/api/flight/internal/{id}/release/{seatCount}")
-	Object releaseSeats(@PathVariable("id") String id, @PathVariable("seatCount") int seatCount);
+	Object releaseSeats(@PathVariable String id, @PathVariable int seatCount);
 }
