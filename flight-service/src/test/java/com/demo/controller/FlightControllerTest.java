@@ -41,41 +41,36 @@ class FlightControllerTest {
 	@Test
 	void addInventory_shouldReturnFlightIdAndMessage() {
 
-	    // Arrange
-	    Flight flight = new Flight();
-	    flight.setAirline("Indigo");
-	    flight.setFromPlace("BLR");
-	    flight.setToPlace("HYD");
-	    flight.setDepartureTime(LocalDateTime.parse("2025-12-01T10:00"));
-	    flight.setArrivalTime(LocalDateTime.parse("2025-12-01T11:30"));
-	    flight.setTotalSeats(100);
-	    flight.setPrice(2500);
+		// Arrange
+		Flight flight = new Flight();
+		flight.setAirline("Indigo");
+		flight.setFromPlace("BLR");
+		flight.setToPlace("HYD");
+		flight.setDepartureTime(LocalDateTime.parse("2025-12-01T10:00"));
+		flight.setArrivalTime(LocalDateTime.parse("2025-12-01T11:30"));
+		flight.setTotalSeats(100);
+		flight.setPrice(2500);
 
-	    Flight saved = new Flight();
-	    saved.setId("flight-123");
+		Flight saved = new Flight();
+		saved.setId("flight-123");
 
-	    when(flightService.addFlight(any(Flight.class)))
-	            .thenReturn(Mono.just(saved));
+		when(flightService.addFlight(any(Flight.class))).thenReturn(Mono.just(saved));
 
-	    // Act
-	    Mono<Map<String, String>> result = flightController.addInventory(flight);
+		// Act
+		Mono<Map<String, String>> result = flightController.addInventory(flight);
 
-	    // Assert
-	    StepVerifier.create(result)
-	            .assertNext(map -> {
-	                assertThat(map)
-	                        .containsEntry("message", "Flight added successfully")
-	                        .containsEntry("flightId", "flight-123");
-	            })
-	            .verifyComplete();
+		// Assert
+		StepVerifier.create(result).assertNext(map -> {
+			assertThat(map).containsEntry("message", "Flight added successfully").containsEntry("flightId",
+					"flight-123");
+		}).verifyComplete();
 
-	    // Capture request argument
-	    ArgumentCaptor<Flight> captor = ArgumentCaptor.forClass(Flight.class);
-	    verify(flightService, times(1)).addFlight(captor.capture());
+		// Capture request argument
+		ArgumentCaptor<Flight> captor = ArgumentCaptor.forClass(Flight.class);
+		verify(flightService, times(1)).addFlight(captor.capture());
 
-	    assertThat(captor.getValue()).isSameAs(flight);
+		assertThat(captor.getValue()).isSameAs(flight);
 	}
-
 
 	@Test
 	void searchFlights_shouldCallService() {
