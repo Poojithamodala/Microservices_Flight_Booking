@@ -12,23 +12,23 @@ import lombok.Data;
 @Document
 public class Passenger {
 
-    @Id
-    private String id;
+	@Id
+	private String id;
 
-    @NotBlank
-    private String name;
+	@NotBlank
+	private String name;
 
-    @NotBlank
-    private String gender;
+	@NotBlank
+	private String gender;
 
-    @NotNull
-    @Min(1)
-    private Integer age;
+	@NotNull
+	@Min(1)
+	private Integer age;
 
-    @NotBlank
-    private String seatNumber;
+	@NotBlank
+	private String seatNumber;
 
-    private String mealPreference;
+	private String mealPreference;
 
-    private String ticketId;
+	private String ticketId;
 }
