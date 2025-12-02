@@ -129,33 +129,23 @@ class FlightServiceImplTest {
 
 	@Test
 	void addFlight_shouldThrowConflictWhenDuplicateExists() {
-	    // Arrange
-	    Flight existing = new Flight();
-	    existing.setId("123");
-	    existing.setAirline("Indigo");
-	    existing.setFromPlace("BLR");
-	    existing.setToPlace("HYD");
-	    existing.setDepartureTime(LocalDateTime.of(2025, 12, 1, 10, 0));
+		Flight existing = new Flight();
+		existing.setId("123");
+		existing.setAirline("Indigo");
+		existing.setFromPlace("BLR");
+		existing.setToPlace("HYD");
+		existing.setDepartureTime(LocalDateTime.of(2025, 12, 1, 10, 0));
 
-	    Flight newFlight = new Flight();
-	    newFlight.setAirline("Indigo");
-	    newFlight.setFromPlace("BLR");
-	    newFlight.setToPlace("HYD");
-	    newFlight.setDepartureTime(LocalDateTime.of(2025, 12, 1, 10, 0));
+		Flight newFlight = new Flight();
+		newFlight.setAirline("Indigo");
+		newFlight.setFromPlace("BLR");
+		newFlight.setToPlace("HYD");
+		newFlight.setDepartureTime(LocalDateTime.of(2025, 12, 1, 10, 0));
 
-	    // Only ONE required stub
-	    when(flightRepository.findByAirlineAndFromPlaceAndToPlaceAndDepartureTime(
-	            anyString(), anyString(), anyString(), any(LocalDateTime.class)
-	    )).thenReturn(Mono.just(existing));
+		when(flightRepository.findByAirlineAndFromPlaceAndToPlaceAndDepartureTime(anyString(), anyString(), anyString(),
+				any(LocalDateTime.class))).thenReturn(Mono.just(existing));
 
-	    // Act & Assert
-	    StepVerifier.create(flightService.addFlight(newFlight))
-	            .expectError(ResponseStatusException.class)
-	            .verify();
-
-	    // Ensure save was **never** called
-	    verify(flightRepository, never()).save(any());
+		StepVerifier.create(flightService.addFlight(newFlight)).expectError(ResponseStatusException.class).verify();
+		verify(flightRepository, never()).save(any());
 	}
-
-
 }
