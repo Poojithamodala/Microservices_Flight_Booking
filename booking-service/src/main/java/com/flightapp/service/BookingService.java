@@ -10,15 +10,12 @@ import java.util.List;
 
 public interface BookingService {
 
-    Mono<String> bookTicket(String userEmail,
-                            String departureFlightId,
-                            String returnFlightId,
-                            List<Passenger> passengers,
-                            FLIGHTTYPE tripType);
+	Mono<String> bookTicket(String userEmail, String departureFlightId, String returnFlightId,
+			List<Passenger> passengers, FLIGHTTYPE tripType);
 
-    Mono<Ticket> getByPnr(String pnr);
+	Mono<Ticket> getByPnr(String pnr);
 
-    Flux<Ticket> historyByEmail(String email);
+	Flux<Ticket> historyByEmail(String email);
 
-    Mono<String> cancelByPnr(String pnr);
+	Mono<String> cancelByPnr(String pnr);
 }
