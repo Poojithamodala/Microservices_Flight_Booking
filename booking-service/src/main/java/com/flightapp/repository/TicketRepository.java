@@ -10,6 +10,6 @@ import reactor.core.publisher.Mono;
 
 @Repository
 public interface TicketRepository extends ReactiveMongoRepository<Ticket, String> {
-    Mono<Ticket> findByPnr(String pnr);
-    Flux<Ticket> findByUserEmail(String email);
+	Mono<Ticket> findByPnr(String pnr);
+	Flux<Ticket> findByUserEmail(String email);
 }
