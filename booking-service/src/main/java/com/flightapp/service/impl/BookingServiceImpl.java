@@ -39,7 +39,6 @@ public class BookingServiceImpl implements BookingService {
 
 	private static final String TOPIC = "booking-events";
 
-
 	@Override
 	public Mono<String> bookTicket(String userEmail, String departureFlightId, String returnFlightId,
 			List<Passenger> passengers, FLIGHTTYPE tripType) {
