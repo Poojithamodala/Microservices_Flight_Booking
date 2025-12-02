@@ -16,35 +16,35 @@ import lombok.Data;
 @Document(collection = "tickets")
 public class Ticket {
 
-    @Id
-    private String id;
+	@Id
+	private String id;
 
-    @NotBlank
-    private String pnr;
+	@NotBlank
+	private String pnr;
 
-    @NotBlank
-    private String userEmail; // easier for history lookup
+	@NotBlank
+	private String userEmail;
 
-    @NotBlank
-    private String departureFlightId;
+	@NotBlank
+	private String departureFlightId;
 
-    private String returnFlightId;
+	private String returnFlightId;
 
-    @NotNull
-    private FLIGHTTYPE tripType;
+	@NotNull
+	private FLIGHTTYPE tripType;
 
-    @NotNull
-    private LocalDateTime bookingTime;
+	@NotNull
+	private LocalDateTime bookingTime;
 
-    private String seatsBooked; // comma separated
+	private String seatsBooked;
 
-    private String mealType;
+	private String mealType;
 
-    @Min(0)
-    private Double totalPrice;
+	@Min(0)
+	private Double totalPrice;
 
-    private boolean canceled;
+	private boolean canceled;
 
-    @Transient
-    private List<Passenger> passengers;
+	@Transient
+	private List<Passenger> passengers;
 }
