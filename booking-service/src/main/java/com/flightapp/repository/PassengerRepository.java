@@ -9,5 +9,5 @@ import reactor.core.publisher.Flux;
 
 @Repository
 public interface PassengerRepository extends ReactiveMongoRepository<Passenger, String> {
-    Flux<Passenger> findByTicketId(String ticketId);
+	Flux<Passenger> findByTicketId(String ticketId);
 }
